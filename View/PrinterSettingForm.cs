@@ -3,14 +3,15 @@ using System.Windows.Forms;
 using System.Drawing.Printing;
 using HwModule.Settings;
 using HwModule.Controller;
+using AppPrintController = HwModule.Controller.PrintController;
 
 namespace HwModule.View
 {
     public partial class PrinterSettingForm : Form
     {
-        private PrintController printController;
+        private AppPrintController printController;
 
-        public PrinterSettingForm(PrintController printController)
+        public PrinterSettingForm(AppPrintController printController)
         {
             InitializeComponent();
             this.printController = printController;

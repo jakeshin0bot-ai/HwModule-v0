@@ -30,9 +30,7 @@
     <Reference Include="ControlzEx, Version=4.0.0.0, Culture=neutral, PublicKeyToken=69f1c32f803d307e, processorArchitecture=MSIL">
       <HintPath>packages\ControlzEx.4.4.0\lib\net461\ControlzEx.dll</HintPath>
     </Reference>
-    <Reference Include="HtmlToXamlConverter, Version=1.0.5727.24510, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\HtmlToXamlConverter.1.0.5727.24510\lib\net40\HtmlToXamlConverter.dll</HintPath>
-    </Reference>
+
     <Reference Include="Microsoft.Xaml.Behaviors, Version=1.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.Xaml.Behaviors.Wpf.1.1.19\lib\net46\Microsoft.Xaml.Behaviors.dll</HintPath>
     </Reference>
@@ -83,7 +81,6 @@
     <Compile Include="Utils\ASCII.cs" />
     <Compile Include="Utils\ExpansionMethods.cs" />
     <Compile Include="View\Behaviors\FocusBehavior.cs" />
-    <Compile Include="View\Behaviors\HtmlRichTextBoxBehavior.cs" />
     <Compile Include="View\Behaviors\RowNumBehavior.cs" />
     <Compile Include="View\Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="View\Converters\DateFormatConverter.cs" />

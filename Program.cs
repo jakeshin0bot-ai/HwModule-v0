@@ -4,6 +4,7 @@ using System.Threading;
 using System.Text;
 using System.IO;
 using System.Windows.Forms;
+using WinFormsApp = System.Windows.Forms.Application;
 using NLog;
 using HwModule.Properties;
 using HwModule.Core;
@@ -12,7 +13,6 @@ using HwModule.Settings;
 using HwModule.Controller;
 using HwModule.View;
 using Newtonsoft.Json;
-using System.Windows;
 
 namespace NotifyIconApp
 {
@@ -28,8 +28,8 @@ namespace NotifyIconApp
         [STAThread]
         static void Main()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+            WinFormsApp.EnableVisualStyles();
+            WinFormsApp.SetCompatibleTextRenderingDefault(false);
 
             // WPF PrintDialog 사용을 위한 WPF Application 인스턴스 생성
             if (System.Windows.Application.Current == null)
@@ -62,7 +62,7 @@ namespace NotifyIconApp
                 noti.Visible = true;
 
                 ThreadPool.QueueUserWorkItem(ListenForRequests);
-                Application.Run();
+                WinFormsApp.Run();
             }
         }
 
@@ -193,7 +193,7 @@ namespace NotifyIconApp
 
         private static void Double_Clicked(object sender, EventArgs e) => OpenPrinterSettingForm();
         private static void Setting_Clicked(object sender, EventArgs e) => OpenPrinterSettingForm();
-        private static void Exit_Clicked(object sender, EventArgs e) => Application.Exit();
+        private static void Exit_Clicked(object sender, EventArgs e) => WinFormsApp.Exit();
 
         private static void OpenPrinterSettingForm()
         {

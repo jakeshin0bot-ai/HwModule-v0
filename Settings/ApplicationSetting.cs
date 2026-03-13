@@ -40,6 +40,13 @@ namespace HwModule.Settings
         /// <summary>true: Windows 기본 프린터 사용 (PrinterName 무시)</summary>
         public bool UseDefaultPrinter { get; set; }
 
+        // ── v3 출력 문구 ───────────────────────────────────────────
+        /// <summary>영수증 하단 문구 (빈 문자열이면 미출력)</summary>
+        public string ReceiptFooterText { get; set; } = "";
+
+        /// <summary>티켓 한줄 알림 (서버 값 없을 때 로컬 기본값)</summary>
+        public string TicketFooterText { get; set; } = "본 티켓은 이용 당일에만 유효합니다.";
+
         private static string filePath = Path.Combine(
             AppDomain.CurrentDomain.BaseDirectory, "Settings", "applicationSetting.json");
 

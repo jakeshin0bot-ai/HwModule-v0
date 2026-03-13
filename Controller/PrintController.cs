@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Printing;
 using System.Drawing.Printing;
+using HwModule.Core;
 using HwModule.Devices.Printer;
 using HwModule.Settings;
 using HwModule.View.TicketTemplates;
@@ -262,6 +263,108 @@ namespace HwModule.Controller
             IDocumentPaginatorSource src = template.Doc;
             pd.PrintDocument(src.DocumentPaginator, "추가결제출력");
             logger.Info("PrintAddPay 완료");
+        }
+
+        // ── v3: 통합 분기 (/print 엔드포인트) ─────────────────────────────
+        public void PrintV3(V3PrintData data)
+        {
+            logger.Info("PrintV3 시작 printType={0}", data.PrintType);
+            switch ((data.PrintType ?? "receipt").ToLower())
+            {
+                case "ticket":
+                    PrintTicketV3(data);
+                    break;
+                case "both":
+                    PrintReceiptV3(data);
+                    PrintTicketV3(data);
+                    break;
+                case "receipt":
+                default:
+                    PrintReceiptV3(data);
+                    break;
+            }
+        }
+
+        // ── v3: 영수증 출력 (printer1, GoodsReceipt 재활용) ───────────────
+        public void PrintReceiptV3(V3PrintData data)
+        {
+            logger.Info("PrintReceiptV3 시작");
+            var settings = ApplicationSetting.Instance;
+            var template = new GoodsReceipt();
+            var pd = CreatePrintDialog(printer1);
+
+            var f = data.Facility    ?? new V3Facility();
+            var r = data.Reservation ?? new V3Reservation();
+            var p = data.Payment     ?? new V3Payment();
+
+            template.CampName    = f.Name    ?? "";
+            template.BusiNo      = f.BusiNo  ?? "";
+            template.MasterName  = f.CeoName ?? "";
+            template.Address     = f.Address ?? "";
+            template.Tel         = f.Tel     ?? "";
+
+            // 결제 정보
+            string authDate14 = (p.AuthDate ?? "").Replace("-", "").Replace(":", "").Replace(" ", "");
+            template.AuthDate   = authDate14.Length >= 14 ? authDate14.Substring(0, 14) : authDate14;
+            template.AuthCode   = p.AuthCode   ?? "";
+            template.PayMethod  = p.Method     ?? "";
+            template.CardName   = p.CardName   ?? "";
+            template.CardQuota  = p.Quota      ?? "00";
+            template.MaskingNum = p.MaskingNum ?? "";
+            template.Vat        = "0";
+            template.TotalAmt   = p.TotalAmt.ToString();
+            template.TotalPay   = p.TotalPay.ToString();
+            template.TotalDcAmt = p.DcAmt.ToString();
+            template.EtcDcAmt   = "0";
+            template.OrderStatus = "1";
+
+            // 상세 목록
+            template.GoodsOrderDetailList = (data.Items ?? new List<V3Item>()).Select(i =>
+                new Dictionary<string, string>
+                {
+                    ["GOODS_NAME"] = i.RoomName ?? "",
+                    ["TOTAL_CNT"]  = i.Qty.ToString(),
+                    ["TOTAL_PAY"]  = i.Price.ToString()
+                }).ToList();
+
+            template.SetMargin(printer1.LayoutSetting.LocationX, printer1.LayoutSetting.LocationY);
+            template.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+            template.Arrange(new Rect(new Point(0, 0), template.DesiredSize));
+            template.UpdateLayout();
+
+            IDocumentPaginatorSource src = template.Doc;
+            pd.PrintDocument(src.DocumentPaginator, "영수증(v3)");
+            logger.Info("PrintReceiptV3 완료");
+        }
+
+        // ── v3: 티켓 출력 (printer2, TicketV3, 가로형) ────────────────────
+        public void PrintTicketV3(V3PrintData data)
+        {
+            logger.Info("PrintTicketV3 시작");
+            var settings = ApplicationSetting.Instance;
+
+            // ticketFooter: JSON 우선, 없으면 로컬 설정값
+            if (data.Facility != null && string.IsNullOrWhiteSpace(data.Facility.TicketFooter))
+                data.Facility.TicketFooter = settings.TicketFooterText;
+
+            // 출력 시점 타임스탬프 채우기
+            if (data.PrintedAt == 0)
+                data.PrintedAt = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+            var template = new TicketV3();
+            template.SetData(data);
+
+            // 가로형 출력 설정
+            var pd = CreatePrintDialog(printer2);
+            pd.PrintTicket.PageOrientation = System.Printing.PageOrientation.Landscape;
+
+            template.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+            template.Arrange(new Rect(new Point(0, 0), template.DesiredSize));
+            template.UpdateLayout();
+
+            IDocumentPaginatorSource src = template.Doc;
+            pd.PrintDocument(src.DocumentPaginator, "이용권(v3)");
+            logger.Info("PrintTicketV3 완료");
         }
 
         // ── v2: 테스트 출력 ────────────────────────────────────────────────

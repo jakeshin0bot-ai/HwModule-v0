@@ -56,6 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controller\PrintController.cs" />
+    <Compile Include="Core\V3PrintData.cs" />
     <Compile Include="Core\AppEnumPackages.cs" />
     <Compile Include="Core\FactoryManager.cs" />
     <Compile Include="Core\IFactory.cs" />
@@ -105,6 +106,9 @@
       <DependentUpon>TicketTemp.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\TicketTemplates\TicketTemplate.cs" />
+    <Compile Include="View\TicketTemplates\TicketV3.xaml.cs">
+      <DependentUpon>TicketV3.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="App.xaml"/>
@@ -122,6 +126,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="View\TicketTemplates\TicketTemp.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\TicketTemplates\TicketV3.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

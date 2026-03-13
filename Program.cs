@@ -8,6 +8,7 @@ using WinFormsApp = System.Windows.Forms.Application;
 using NLog;
 using HwModule.Properties;
 using HwModule.Core;
+using V3PrintData = HwModule.Core.V3PrintData;
 using HwModule.Devices.Printer;
 using HwModule.Settings;
 using HwModule.Controller;
@@ -136,6 +137,24 @@ namespace NotifyIconApp
                             buffer = Encoding.UTF8.GetBytes(responseString);
                             UIThreadHelper.RunOnUIThread(() => printController.PrintTest1(""));
                             break;
+
+                        // ── v3 엔드포인트 (통합, /print /receipt /ticket) ──
+                        case "/print":
+                        case "/receipt":
+                        case "/ticket":
+                        {
+                            V3PrintData v3data = JsonConvert.DeserializeObject<V3PrintData>(
+                                JsonConvert.SerializeObject(postData));
+
+                            // 엔드포인트로 직접 접근 시 printType 강제 설정
+                            if (requestUrl == "/receipt") v3data.PrintType = "receipt";
+                            if (requestUrl == "/ticket")  v3data.PrintType = "ticket";
+
+                            responseString = requestUrl + " success!";
+                            buffer = Encoding.UTF8.GetBytes(responseString);
+                            UIThreadHelper.RunOnUIThread(() => printController.PrintV3(v3data));
+                            break;
+                        }
 
                         // ── v1 엔드포인트 (캠핑/현장구매 영수증) ──────────
                         case "/goodsreceiptprint":

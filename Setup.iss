@@ -20,8 +20,8 @@ Name: "autostart";   Description: "Windows 시작 시 자동 실행";   GroupDes
 
 [Files]
 Source: "bin\Release\HwModule.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "bin\Release\*.dll";        DestDir: "{app}"; Flags: ignoreversion recursesubdirs
-Source: "bin\Release\*.config";     DestDir: "{app}"; Flags: ignoreversion
+Source: "bin\Release\*.dll";        DestDir: "{app}"; Flags: ignoreversion recursesubdirs skipifsourcedoesntexist
+Source: "bin\Release\*.config";     DestDir: "{app}"; Flags: ignoreversion skipifsourcedoesntexist
 
 [Icons]
 Name: "{group}\HwModule v0";          Filename: "{app}\HwModule.exe"

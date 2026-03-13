@@ -55,9 +55,6 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controller\PrintController.cs" />
     <Compile Include="Core\AppEnumPackages.cs" />
     <Compile Include="Core\FactoryManager.cs" />
@@ -110,10 +107,8 @@
     <Compile Include="View\TicketTemplates\TicketTemplate.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </ApplicationDefinition>
+    <Resource Include="App.xaml"/>
+
     <Page Include="View\TicketTemplates\AddPayTemp.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

@@ -1,14 +1,1 @@
-﻿using System.Windows;
-
-namespace SecurityTour.Pos
-{
-    /// <summary>
-    /// App.xaml에 대한 상호 작용 논리
-    /// </summary>
-    public partial class App : Application
-    {
-        public App()
-        {
-        }
-    }
-}
+// App.xaml.cs - 리소스 딕셔너리용 (엔트리포인트는 Program.cs)

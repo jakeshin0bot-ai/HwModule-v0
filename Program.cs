@@ -12,6 +12,7 @@ using HwModule.Settings;
 using HwModule.Controller;
 using HwModule.View;
 using Newtonsoft.Json;
+using System.Windows;
 
 namespace NotifyIconApp
 {
@@ -29,6 +30,12 @@ namespace NotifyIconApp
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
+            // WPF PrintDialog 사용을 위한 WPF Application 인스턴스 생성
+            if (System.Windows.Application.Current == null)
+            {
+                new System.Windows.Application { ShutdownMode = System.Windows.ShutdownMode.OnExplicitShutdown };
+            }
 
             var settings = ApplicationSetting.Instance;
 

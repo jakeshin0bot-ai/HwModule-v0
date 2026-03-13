@@ -1,0 +1,44 @@
+name: Build HwModule v0
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v2
+
+      - name: Restore NuGet packages
+        run: nuget restore HwModule.sln
+
+      - name: Build (Release x64)
+        run: msbuild HwModule.sln /p:Configuration=Release /p:Platform=x64 /m
+
+      - name: Compile Installer (Inno Setup)
+        uses: Minionguyjpro/Inno-Setup-Action@v1.2.4
+        with:
+          path: Setup.iss
+          options: /O+
+
+      - name: Upload EXE artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: HwModule-v0-exe
+          path: bin/Release/HwModule.exe
+
+      - name: Upload Installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: HwModule-v0-installer
+          path: Output/HwModule-v0-Setup.exe

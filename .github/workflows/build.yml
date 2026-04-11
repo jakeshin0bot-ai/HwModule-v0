@@ -14,11 +14,18 @@ jobs:
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
 
+      - name: Setup NuGet
+        uses: nuget/setup-nuget@v2
+
       - name: Restore NuGet packages
-        run: nuget restore HwModule.sln
+        run: nuget restore HwModule.sln -PackagesDirectory packages
 
       - name: Build Release
-        run: msbuild HwModule.sln /p:Configuration=Release /p:Platform=x64 /m
+        run: msbuild HwModule.sln /p:Configuration=Release /p:Platform=x64 /p:RestorePackages=false /m
+
+      - name: List output
+        run: Get-ChildItem bin\x64\Release\ -Recurse | Select-Object Name, Length
+        shell: pwsh
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4

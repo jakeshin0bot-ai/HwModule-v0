@@ -40,6 +40,9 @@
     <Reference Include="NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>packages\NLog.5.2.3\lib\net46\NLog.dll</HintPath>
     </Reference>
+    <Reference Include="zxing, Version=0.16.9.0, Culture=neutral, PublicKeyToken=null, processorArchitecture=MSIL">
+      <HintPath>packages\ZXing.Net.0.16.9\lib\net461\zxing.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />

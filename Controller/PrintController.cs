@@ -158,11 +158,16 @@ namespace HwModule.Controller
             template.MaskingNum  = Convert.ToString(jsonData.printParams.MASKINGNUM);
             template.Vat         = Convert.ToString(jsonData.printParams.VAT ?? "0");
 
-            long ts = long.Parse(Convert.ToString(jsonData.printParams.PRINT_DATE));
-            DateTime kst = TimeZoneInfo.ConvertTimeFromUtc(
-                DateTimeOffset.FromUnixTimeMilliseconds(ts).UtcDateTime,
-                TimeZoneInfo.FindSystemTimeZoneById("Korea Standard Time"));
-            template.PrintDate = kst.ToString("yyyy.MM.dd HH:mm:ss");
+            string printDateStr = Convert.ToString(jsonData.printParams.PRINT_DATE ?? "0");
+            try {
+                long ts = long.Parse(printDateStr);
+                DateTime kst = TimeZoneInfo.ConvertTimeFromUtc(
+                    DateTimeOffset.FromUnixTimeMilliseconds(ts).UtcDateTime,
+                    TimeZoneInfo.FindSystemTimeZoneById("Korea Standard Time"));
+                template.PrintDate = kst.ToString("yyyy.MM.dd HH:mm:ss");
+            } catch {
+                template.PrintDate = DateTime.Now.ToString("yyyy.MM.dd HH:mm:ss");
+            }
 
             template.OrderNum    = Convert.ToString(jsonData.printParams.ORDER_NUM);
             template.TicketName  = Convert.ToString(jsonData.printParams.TICKET_NAME);

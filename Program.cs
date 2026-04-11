@@ -102,7 +102,12 @@ namespace NotifyIconApp
                 string responseString = "";
                 byte[] buffer = null;
 
-                if (request.HttpMethod == "POST")
+                // OPTIONS preflight 처리 (CORS)
+                if (request.HttpMethod == "OPTIONS")
+                {
+                    buffer = Encoding.UTF8.GetBytes("");
+                }
+                else if (request.HttpMethod == "POST")
                 {
                     using (StreamReader reader = new StreamReader(request.InputStream, Encoding.UTF8))
                     {
@@ -246,6 +251,9 @@ namespace NotifyIconApp
                 }
 
                 context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+                context.Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+                context.Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Authorization");
+                context.Response.Headers.Add("Access-Control-Allow-Credentials", "false");
                 context.Response.ContentLength64 = buffer.Length;
                 context.Response.OutputStream.Write(buffer, 0, buffer.Length);
                 context.Response.OutputStream.Close();

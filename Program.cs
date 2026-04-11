@@ -235,7 +235,7 @@ namespace NotifyIconApp
                             printer2 = new HwModule.Devices.Printer.GeneralPrinter(s.PrinterSetting2, s.PrintPaperSetting2, s.PrintLayoutSetting2);
                             printController = new PrintController(printer1, printer2);
                         });
-                        responseString = "{"result":"SUCCESS"}";
+                        responseString = "{\"result\":\"SUCCESS\"}";
                     }
                     buffer = Encoding.UTF8.GetBytes(responseString);
                 }

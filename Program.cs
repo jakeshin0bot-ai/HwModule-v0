@@ -182,6 +182,63 @@ namespace NotifyIconApp
                             break;
                     }
                 }
+                else if (request.HttpMethod == "GET")
+                {
+                    switch (requestUrl)
+                    {
+                        case "/printerlist":
+                        {
+                            // 설치된 프린터 목록 반환
+                            var printers = new Newtonsoft.Json.Linq.JArray();
+                            foreach (string pName in System.Drawing.Printing.PrinterSettings.InstalledPrinters)
+                            {
+                                printers.Add(pName);
+                            }
+                            var resp = new Newtonsoft.Json.Linq.JObject();
+                            resp["result"] = "SUCCESS";
+                            resp["printerList"] = printers;
+                            // 현재 설정된 프린터도 포함
+                            var s = ApplicationSetting.Instance;
+                            resp["printer1"] = s.PrinterSetting?.PrinterName ?? "";
+                            resp["printer2"] = s.PrinterSetting2?.PrinterName ?? "";
+                            resp["useDefaultPrinter"] = s.UseDefaultPrinter;
+                            responseString = resp.ToString(Newtonsoft.Json.Formatting.None);
+                            break;
+                        }
+                        case "/ping":
+                            responseString = "isConnected";
+                            break;
+                        default:
+                            responseString = requestUrl + " not found";
+                            break;
+                    }
+                    buffer = Encoding.UTF8.GetBytes(responseString);
+                }
+                else if (request.HttpMethod == "POST" && requestUrl == "/printersetting")
+                {
+                    // 프린터 설정 저장
+                    using (StreamReader reader = new StreamReader(request.InputStream, Encoding.UTF8))
+                    {
+                        string jsonData = reader.ReadToEnd();
+                        dynamic settingData = JsonConvert.DeserializeObject(jsonData);
+                        var s = ApplicationSetting.Instance;
+                        if (settingData.printer1 != null)
+                            s.PrinterSetting.PrinterName = Convert.ToString(settingData.printer1);
+                        if (settingData.printer2 != null)
+                            s.PrinterSetting2.PrinterName = Convert.ToString(settingData.printer2);
+                        if (settingData.useDefaultPrinter != null)
+                            s.UseDefaultPrinter = Convert.ToBoolean(settingData.useDefaultPrinter);
+                        s.SaveToFile();
+                        // printer 객체 갱신
+                        UIThreadHelper.RunOnUIThread(() => {
+                            printer1 = new HwModule.Devices.Printer.GeneralPrinter(s.PrinterSetting, s.PrintPaperSetting, s.PrintLayoutSetting);
+                            printer2 = new HwModule.Devices.Printer.GeneralPrinter(s.PrinterSetting2, s.PrintPaperSetting2, s.PrintLayoutSetting2);
+                            printController = new PrintController(printer1, printer2);
+                        });
+                        responseString = "{"result":"SUCCESS"}";
+                    }
+                    buffer = Encoding.UTF8.GetBytes(responseString);
+                }
                 else
                 {
                     responseString = "method not allowed";

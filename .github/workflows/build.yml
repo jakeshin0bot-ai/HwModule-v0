@@ -1,66 +1,28 @@
-name: Build HwModule v0
+name: Build HwModule
 
 on:
   push:
-    branches: [ main ]
-    tags:     [ 'v*' ]
-  pull_request:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: windows-latest
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
 
-      - name: Setup NuGet
-        uses: NuGet/setup-nuget@v2
-
       - name: Restore NuGet packages
         run: nuget restore HwModule.sln
 
-      - name: Build (Release)
-        run: msbuild HwModule.sln /p:Configuration=Release /p:Platform="Any CPU" /m
+      - name: Build Release
+        run: msbuild HwModule.sln /p:Configuration=Release /p:Platform=x64 /m
 
-      - name: Create output directory
-        run: mkdir -p dist
-
-      - name: Copy build artifacts
-        run: |
-          cp -r bin\Release\* dist\
-        shell: cmd
-
-      # ── Inno Setup 인스톨러 (태그 push 시만) ──────────────────────
-      - name: Install Inno Setup
-        if: startsWith(github.ref, 'refs/tags/')
-        run: choco install innosetup -y
-
-      - name: Build installer
-        if: startsWith(github.ref, 'refs/tags/')
-        run: iscc Setup.iss
-
-      # ── GitHub Release 업로드 (태그 push 시만) ─────────────────────
-      - name: Create GitHub Release
-        if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v2
-        with:
-          files: |
-            dist/HwModule.exe
-            Output/HwModuleSetup.exe
-          generate_release_notes: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # ── 아티팩트 보존 (태그 없어도 항상) ──────────────────────────
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: HwModule-v0-${{ github.sha }}
-          path: dist/
-          retention-days: 14
+          name: HwModule-Release
+          path: bin/x64/Release/
+          retention-days: 30
